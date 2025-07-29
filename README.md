@@ -1,2 +1,2 @@
-# jarvis
-Jarvis is an LLM powered personal assistant
+# Jarvis
+Jarvis is an LLM powered personal assistant.
