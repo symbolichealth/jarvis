@@ -35,7 +35,7 @@ func (g *Gemini) Chat(history []string, message string) (string, error) {
 	}
 
 	ctx := context.Background()
-	cs := g.client.GenerativeModel("gemini-pro").StartChat()
+	cs := g.client.GenerativeModel("gemini-2.5-flash").StartChat()
 
 	// Convert existing history to chat messages.
 	for i, h := range history {

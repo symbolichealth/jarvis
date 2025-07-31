@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
+	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/urfave/cli/v2"
 
@@ -15,32 +19,37 @@ func main() {
 		Usage: "Interact with the Jarvis assistant",
 		Commands: []*cli.Command{
 			{
-				Name:  "start",
-				Usage: "start a new Jarvis session",
-				Action: func(c *cli.Context) error {
-					j := jarvis.Start()
-					c.App.Metadata = map[string]interface{}{"jarvis": j}
-					return nil
-				},
-			},
-			{
 				Name:  "chat",
-				Usage: "send a chat message",
+				Usage: "start an interactive chat session",
 				Action: func(c *cli.Context) error {
-					j, ok := c.App.Metadata["jarvis"].(*jarvis.Jarvis)
-					if !ok || j == nil {
-						j = jarvis.Start()
-						c.App.Metadata["jarvis"] = j
+					if c.NArg() > 0 {
+						return cli.Exit("chat takes no arguments", 1)
 					}
-					if c.NArg() == 0 {
-						return cli.Exit("message required", 1)
+
+					j := jarvis.Start()
+					reader := bufio.NewReader(os.Stdin)
+
+					for {
+						fmt.Print("> ")
+						input, err := reader.ReadString('\n')
+						if err == io.EOF {
+							fmt.Println("\nExiting chat.")
+							return nil
+						}
+						if err != nil {
+							return err
+						}
+						input = strings.TrimSpace(input)
+						if input == "" {
+							continue
+						}
+
+						resp, err := j.Chat(input)
+						if err != nil {
+							return err
+						}
+						fmt.Printf("\nJarvis: %s\n", resp)
 					}
-					resp, err := j.Chat(c.Args().First())
-					if err != nil {
-						return err
-					}
-					_, err = os.Stdout.WriteString(resp + "\n")
-					return err
 				},
 			},
 		},
