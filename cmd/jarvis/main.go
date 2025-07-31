@@ -6,7 +6,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/jarvis-ai/jarvis"
+	"github.com/symbolichealth/jarvis"
 )
 
 func main() {
