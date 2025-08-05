@@ -1,6 +1,7 @@
 # Jarvis
 Jarvis is an LLM powered personal assistant that can do generally useful things, such as:
 * Notion project manager
+* Business plan creator
 * Deep research that is configurable
 * Data miner
 * Financial advisor
