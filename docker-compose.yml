@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: jarvis-postgres
+    environment:
+      POSTGRES_DB: jarvis
+      POSTGRES_USER: jarvis
+      POSTGRES_PASSWORD: jarvis_password
+      POSTGRES_MULTIPLE_DATABASES: temporal_jarvis,temporal_visibility_jarvis
+    ports:
+      - "4432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh
+
+  # Temporal Server
+  temporal:
+    image: temporalio/auto-setup:1.24.2
+    container_name: temporal-server
+    depends_on:
+      - postgres
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=jarvis
+      - POSTGRES_PWD=jarvis_password
+      - POSTGRES_SEEDS=postgres
+      - POSTGRES_DB=temporal_jarvis
+      - VISIBILITY_DBNAME=temporal_visibility_jarvis
+      - TEMPORAL_ADDRESS=temporal:7233
+    ports:
+      - "6233:7233"   # Temporal gRPC endpoint
+
+  # Temporal Web UI
+  temporal-ui:
+    image: temporalio/ui:2.27.2
+    container_name: temporal-ui
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000,http://localhost:5173,http://localhost:7080
+    ports:
+      - "7080:8080"   # Temporal Web UI
+
+  # Jarvis Server
+  jarvis-server:
+    build: .
+    container_name: jarvis-server
+    depends_on:
+      - postgres
+      - temporal
+      - temporal-ui
+    env_file:
+      - .env
+    ports:
+      - "7070:7070"   # Jarvis API Server
+
+volumes:
+  postgres_data:
+    driver: local

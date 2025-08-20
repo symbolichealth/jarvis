@@ -42,8 +42,38 @@ To start the web server:
 $ go run ./cmd/server
 ```
 
-Then open your browser to the React webapp at `http://localhost:5173` (see `apps/jarvis-webapp/`).
+To start the client:
+```bash
+$ cd apps/jarvis-webapp && yarn dev
+```
+Then open your browser to the React webapp at `http://localhost:5173` (see `apps/jarvis-webapp/` for details).
 
 The web server runs on port 7070 and provides:
 - `POST /chat` - Chat endpoint for the webapp
 - `GET /health` - Health check endpoint
+
+## Docker Setup
+
+To run with PostgreSQL and Temporal using Docker:
+
+1. **Create environment file:**
+   ```bash
+   cp .env.example .env  # You'll need to create this file manually
+   ```
+
+2. **Start services:**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access services:**
+   - PostgreSQL: `localhost:4432` (jarvis/jarvis_password) - hosts both `jarvis` and `temporal/temporal_visibility` databases
+   - Temporal UI: http://localhost:7080
+   - Temporal gRPC: `localhost:6233`
+
+4. **Stop services:**
+   ```bash
+   docker-compose down
+   ```
+
+For detailed Docker setup instructions, see `README-Docker.md`.
