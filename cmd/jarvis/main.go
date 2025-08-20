@@ -10,7 +10,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/symbolichealth/jarvis"
+	jarvis "github.com/symbolichealth/jarvis/backend"
 )
 
 func main() {

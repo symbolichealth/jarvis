@@ -16,6 +16,8 @@ The only real requirements are:
 Anything else is really just a suggestion. Ultimately, users should be able to fork the repo, run `./jarvis ...` and get utility.
 
 ## Usage
+
+### Chat Interface (CLI)
 ```
 $ go run cmd/jarvis/main.go chat
 > What's the population of the United States?
@@ -33,3 +35,15 @@ Jarvis: Based on the current estimated population of the United States (around 3
 These two countries have significantly larger populations than the United States. The third most populous country after India and China is the United States itself.
 > 
 ```
+
+### Web Interface
+To start the web server:
+```bash
+$ go run ./cmd/server
+```
+
+Then open your browser to the React webapp at `http://localhost:5173` (see `apps/jarvis-webapp/`).
+
+The web server runs on port 7070 and provides:
+- `POST /chat` - Chat endpoint for the webapp
+- `GET /health` - Health check endpoint
